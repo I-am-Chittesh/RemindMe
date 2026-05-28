@@ -70,59 +70,63 @@ const useTasks = (userId) => {
 
   // Schedule a local notification via service worker
   const scheduleNotification = (task) => {
-  if (!task.reminderTime) return;
-  if (Notification.permission !== "granted") {
-    console.warn("Notifications not granted");
-    return;
-  }
-
-  const reminderDate = new Date(task.reminderTime);
-  const now = new Date();
-  const delay = reminderDate.getTime() - now.getTime();
-
-  console.log(`Scheduling notification for "${task.title}" in ${Math.round(delay / 1000)}s`);
-
-  if (delay <= 0) {
-    console.warn("Reminder time already passed");
-    return;
-  }
-
-  setTimeout(() => {
-    console.log("Firing notification for:", task.title);
-
-    // try service worker first
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.controller.postMessage({
-        type: "SHOW_NOTIFICATION",
-        title: "RemindMe 🔔",
-        body: task.title,
-        data: { taskId: task.id },
-      });
-    } else {
-      // direct fallback
-      new Notification("RemindMe 🔔", {
-        body: task.title,
-        icon: "/icons/icon-192x192.png",
-        vibrate: [200, 100, 200],
-      });
+    if (!task.reminderTime) {
+      return;
     }
-  }, delay);
-};
+
+    if (Notification.permission !== "granted") {
+      console.warn("Notification permission not granted");
+      return;
+    }
+
+    const reminderDate = new Date(task.reminderTime);
+    const now = new Date();
+    const delay = reminderDate.getTime() - now.getTime();
+
+    console.log(`Scheduling notification for "${task.title}" in ${Math.round(delay / 1000)}s`);
+
+    if (delay <= 0) {
+      console.warn("Reminder time already passed for:", task.title);
+      return;
+    }
+
+    // Store the timeout ID to clear later if needed
+    const timeoutId = setTimeout(() => {
+      console.log("Firing notification for:", task.title);
+
+      // Try service worker first
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: "SHOW_NOTIFICATION",
+          title: "RemindMe 🔔",
+          body: task.title,
+          data: { taskId: task.id },
+        });
+        console.log("Notification sent to service worker");
+      } else {
+        // Fallback: show notification directly
+        console.log("Fallback: showing notification directly");
+        if (Notification.permission === "granted") {
+          new Notification("RemindMe 🔔", {
+            body: task.title,
+            icon: "/icons/icon-192x192.png",
+            badge: "/icons/icon-192x192.png",
+            vibrate: [200, 100, 200],
+          });
+        }
+      }
+    }, delay);
+
+    // Store timeout ID in task data if possible
+    task._timeoutId = timeoutId;
+  };
 
   // Reschedule all pending notifications on app load
-  const rescheduleAll = useCallback((taskList) => {
-    taskList.forEach((task) => {
-      if (!task.completed) {
-        scheduleNotification(task);
-      }
-    });
-  }, []);
-
   useEffect(() => {
-    if (tasks.length > 0) {
+    if (tasks.length > 0 && !loading) {
       rescheduleAll(tasks);
     }
-  }, []);
+  }, [loading]);
 
   return {
     tasks,

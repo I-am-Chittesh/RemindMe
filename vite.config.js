@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/icon-192x192.png', 'icons/icon-512x512.png'],
+      includeAssets: ['icons/icon-192x192.png', 'icons/icon-512x512.png', 'firebase-messaging-sw.js'],
       manifest: {
         name: 'RemindMe - Task & Reminder App',
         short_name: 'RemindMe',

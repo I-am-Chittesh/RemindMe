@@ -2,10 +2,10 @@ import { useEffect } from "react"
 import useAuth from "./hooks/useAuth"
 import useTheme from "./hooks/useTheme"
 import { signInWithGoogle, logOut } from "./firebase/auth"
-import { requestNotificationPermission } from "./firebase/messaging"
+import { requestNotificationPermission, onForegroundMessage } from "./firebase/messaging"
 import Home from "./pages/Home"
 import { motion } from "framer-motion"
-import { requestNotificationPermission, onForegroundMessage } from "./firebase/messaging";
+
 
 const App = () => {
   const { user, loading } = useAuth()
