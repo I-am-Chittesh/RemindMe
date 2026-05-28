@@ -1,4 +1,5 @@
 import useTheme from "../hooks/useTheme";
+import { usePWAInstall } from "../hooks/usePWAInstall";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -17,6 +18,7 @@ const getDate = () => {
 
 const Header = ({ tasks }) => {
   const { theme, toggleTheme } = useTheme();
+  const { canInstall, promptInstall } = usePWAInstall();
 
   const total = tasks.length;
   const completed = tasks.filter((t) => t.completed).length;
@@ -33,13 +35,26 @@ const Header = ({ tasks }) => {
           <p className="text-sm text-apple-gray mt-0.5">{getDate()}</p>
         </div>
 
-        {/* theme toggle */}
-        <button
-          onClick={toggleTheme}
-          className="w-9 h-9 rounded-full bg-white dark:bg-apple-darkcard border border-gray-200 dark:border-apple-darkborder flex items-center justify-center text-lg shadow-apple"
-        >
-          {theme === "dark" ? "☀️" : "🌙"}
-        </button>
+        {/* install & theme toggle */}
+        <div className="flex gap-2">
+          {canInstall && (
+            <button
+              onClick={promptInstall}
+              className="w-9 h-9 rounded-full bg-white dark:bg-apple-darkcard border border-gray-200 dark:border-apple-darkborder flex items-center justify-center text-lg shadow-apple hover:bg-gray-50 dark:hover:bg-apple-darkcardHover transition-colors"
+              title="Install app"
+            >
+              ⬇️
+            </button>
+          )}
+          {/* theme toggle */}
+          <button
+            onClick={toggleTheme}
+            className="w-9 h-9 rounded-full bg-white dark:bg-apple-darkcard border border-gray-200 dark:border-apple-darkborder flex items-center justify-center text-lg shadow-apple hover:bg-gray-50 dark:hover:bg-apple-darkcardHover transition-colors"
+            title="Toggle theme"
+          >
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
+        </div>
       </div>
 
       {/* summary bar */}
