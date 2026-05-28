@@ -5,17 +5,24 @@ import { signInWithGoogle, logOut } from "./firebase/auth"
 import { requestNotificationPermission } from "./firebase/messaging"
 import Home from "./pages/Home"
 import { motion } from "framer-motion"
+import { requestNotificationPermission, onForegroundMessage } from "./firebase/messaging";
 
 const App = () => {
   const { user, loading } = useAuth()
   const { theme } = useTheme()
 
   // request notification permission once user logs in
-  useEffect(() => {
-    if (user) {
-      requestNotificationPermission(user.uid)
-    }
-  }, [user])
+// replace your existing useEffect for notifications with this
+useEffect(() => {
+  if (user) {
+    requestNotificationPermission(user.uid);
+    // listen for foreground messages
+    const unsubscribe = onForegroundMessage((payload) => {
+      console.log("Foreground notification shown:", payload);
+    });
+    return () => unsubscribe();
+  }
+}, [user]);
 
   // loading screen
   if (loading) {

@@ -70,32 +70,44 @@ const useTasks = (userId) => {
 
   // Schedule a local notification via service worker
   const scheduleNotification = (task) => {
-    if (!task.reminderTime) return;
-    if (Notification.permission !== "granted") return;
+  if (!task.reminderTime) return;
+  if (Notification.permission !== "granted") {
+    console.warn("Notifications not granted");
+    return;
+  }
 
-    const reminderDate = new Date(task.reminderTime);
-    const now = new Date();
-    const delay = reminderDate.getTime() - now.getTime();
+  const reminderDate = new Date(task.reminderTime);
+  const now = new Date();
+  const delay = reminderDate.getTime() - now.getTime();
 
-    if (delay <= 0) return; // reminder time already passed
+  console.log(`Scheduling notification for "${task.title}" in ${Math.round(delay / 1000)}s`);
 
-    setTimeout(() => {
-      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: "SHOW_NOTIFICATION",
-          title: "RemindMe 🔔",
-          body: task.title,
-          data: { taskId: task.id },
-        });
-      } else {
-        // fallback — direct notification if SW not available
-        new Notification("RemindMe 🔔", {
-          body: task.title,
-          icon: "/icons/icon-192x192.png",
-        });
-      }
-    }, delay);
-  };
+  if (delay <= 0) {
+    console.warn("Reminder time already passed");
+    return;
+  }
+
+  setTimeout(() => {
+    console.log("Firing notification for:", task.title);
+
+    // try service worker first
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: "SHOW_NOTIFICATION",
+        title: "RemindMe 🔔",
+        body: task.title,
+        data: { taskId: task.id },
+      });
+    } else {
+      // direct fallback
+      new Notification("RemindMe 🔔", {
+        body: task.title,
+        icon: "/icons/icon-192x192.png",
+        vibrate: [200, 100, 200],
+      });
+    }
+  }, delay);
+};
 
   // Reschedule all pending notifications on app load
   const rescheduleAll = useCallback((taskList) => {
