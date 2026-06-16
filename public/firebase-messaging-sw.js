@@ -12,58 +12,105 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-console.log("[Firebase SW] Service Worker initialized");
+// store scheduled notifications in SW cache
+const NOTIF_STORE = "scheduled-notifications";
+
+// get all scheduled notifications from cache
+const getScheduled = async () => {
+  const cache = await caches.open(NOTIF_STORE);
+  const keys = await cache.keys();
+  const notifications = [];
+  for (const key of keys) {
+    const res = await cache.match(key);
+    const data = await res.json();
+    notifications.push({ key: key.url, ...data });
+  }
+  return notifications;
+};
+
+// save a notification to cache
+const saveNotification = async (id, data) => {
+  const cache = await caches.open(NOTIF_STORE);
+  const res = new Response(JSON.stringify(data));
+  await cache.put(`https://remindme-notif/${id}`, res);
+};
+
+// delete a fired notification from cache
+const deleteNotification = async (key) => {
+  const cache = await caches.open(NOTIF_STORE);
+  await cache.delete(key);
+};
+
+// check every minute if any notification should fire
+const checkAndFire = async () => {
+  const now = Date.now();
+  const scheduled = await getScheduled();
+
+  for (const notif of scheduled) {
+    if (notif.fireAt <= now) {
+      await self.registration.showNotification(notif.title, {
+        body: notif.body,
+        icon: "/icons/icon-192x192.png",
+        badge: "/icons/icon-192x192.png",
+        vibrate: [200, 100, 200],
+        tag: notif.id,
+        data: { taskId: notif.id },
+      });
+      await deleteNotification(notif.id);
+    }
+  }
+};
+
+// run check every 60 seconds
+setInterval(checkAndFire, 60 * 1000);
+
+// listen for schedule/cancel messages from the app
+self.addEventListener("message", async (event) => {
+  const { type, id, title, body, fireAt } = event.data;
+
+  if (type === "SCHEDULE_NOTIFICATION") {
+    console.log("SW: scheduling notification for", title, "at", new Date(fireAt));
+    await saveNotification(id, { id, title, body, fireAt });
+    // also check immediately in case it's very soon
+    await checkAndFire();
+  }
+
+  if (type === "CANCEL_NOTIFICATION") {
+    await deleteNotification(id);
+  }
+
+  if (type === "SHOW_NOTIFICATION") {
+    await self.registration.showNotification(title, {
+      body,
+      icon: "/icons/icon-192x192.png",
+      badge: "/icons/icon-192x192.png",
+      vibrate: [200, 100, 200],
+    });
+  }
+});
 
 // background FCM notifications
 messaging.onBackgroundMessage((payload) => {
-  console.log("[Firebase SW] Background message:", payload);
-  
-  const notification = payload.notification || {};
-  const title = notification.title || "RemindMe";
-  const body = notification.body || "";
-  
-  if (body) {
-    self.registration.showNotification(title, {
-      body,
-      icon: "/icons/icon-192x192.png",
-      badge: "/icons/icon-192x192.png",
-      vibrate: [200, 100, 200],
-    });
-  }
+  const { title, body } = payload.notification;
+  self.registration.showNotification(title, {
+    body,
+    icon: "/icons/icon-192x192.png",
+    badge: "/icons/icon-192x192.png",
+    vibrate: [200, 100, 200],
+  });
 });
 
-// handle postMessage from main app
-self.addEventListener("message", (event) => {
-  console.log("[Firebase SW] Message event:", event.data);
-  
-  if (event.data && event.data.type === "SHOW_NOTIFICATION") {
-    const { title, body, data } = event.data;
-    
-    self.registration.showNotification(title, {
-      body,
-      icon: "/icons/icon-192x192.png",
-      badge: "/icons/icon-192x192.png",
-      vibrate: [200, 100, 200],
-      data: data || {},
-    });
-  }
-});
-
-// notification click handler
+// notification tap → open app
 self.addEventListener("notificationclick", (event) => {
-  console.log("[Firebase SW] Notification clicked");
-  
   event.notification.close();
-  event.waitUntil(
-    clients.matchAll({ type: "window" }).then((windowClients) => {
-      for (let i = 0; i < windowClients.length; i++) {
-        if (windowClients[i].url === "/") {
-          return windowClients[i].focus();
-        }
-      }
-      if (clients.openWindow) {
-        return clients.openWindow("/");
-      }
-    })
-  );
+  event.waitUntil(clients.openWindow("/"));
+});
+
+// activate SW immediately
+self.addEventListener("install", (event) => {
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(clients.claim());
 });

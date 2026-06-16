@@ -59,74 +59,62 @@ const useTasks = (userId) => {
   };
 
   // Delete a task
-  const handleDeleteTask = async (taskId) => {
-    try {
-      await deleteTask(userId, taskId);
-      setTasks((prev) => prev.filter((t) => t.id !== taskId));
-    } catch (err) {
-      setError(err.message);
+const handleDeleteTask = async (taskId) => {
+  try {
+    await deleteTask(userId, taskId);
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+
+    // cancel the scheduled notification too
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({
+        type: "CANCEL_NOTIFICATION",
+        id: taskId,
+      });
     }
-  };
+  } catch (err) {
+    setError(err.message);
+  }
+};
 
   // Schedule a local notification via service worker
-  const scheduleNotification = (task) => {
-    if (!task.reminderTime) {
-      return;
-    }
+  const scheduleNotification = async (task) => {
+  if (!task.reminderTime) return;
+  if (Notification.permission !== "granted") {
+    console.warn("Notification permission not granted");
+    return;
+  }
 
-    if (Notification.permission !== "granted") {
-      console.warn("Notification permission not granted");
-      return;
-    }
+  const fireAt = new Date(task.reminderTime).getTime();
+  const now = Date.now();
 
-    const reminderDate = new Date(task.reminderTime);
-    const now = new Date();
-    const delay = reminderDate.getTime() - now.getTime();
+  if (fireAt <= now) {
+    console.warn("Reminder time already passed");
+    return;
+  }
 
-    console.log(`Scheduling notification for "${task.title}" in ${Math.round(delay / 1000)}s`);
+  console.log(`Scheduling notification for "${task.title}" at ${new Date(fireAt)}`);
 
-    if (delay <= 0) {
-      console.warn("Reminder time already passed for:", task.title);
-      return;
-    }
+  // wait for SW to be ready
+  const registration = await navigator.serviceWorker.ready;
 
-    // Store the timeout ID to clear later if needed
-    const timeoutId = setTimeout(() => {
-      console.log("Firing notification for:", task.title);
-
-      // Try service worker first
-      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: "SHOW_NOTIFICATION",
-          title: "RemindMe 🔔",
-          body: task.title,
-          data: { taskId: task.id },
-        });
-        console.log("Notification sent to service worker");
-      } else {
-        // Fallback: show notification directly
-        console.log("Fallback: showing notification directly");
-        if (Notification.permission === "granted") {
-          new Notification("RemindMe 🔔", {
-            body: task.title,
-            icon: "/icons/icon-192x192.png",
-            badge: "/icons/icon-192x192.png",
-            vibrate: [200, 100, 200],
-          });
-        }
-      }
-    }, delay);
-
-    // Store timeout ID in task data if possible
-    task._timeoutId = timeoutId;
-  };
+  // send to SW to handle
+  registration.active.postMessage({
+    type: "SCHEDULE_NOTIFICATION",
+    id: task.id,
+    title: "RemindMe 🔔",
+    body: task.title,
+    fireAt,
+  });
+};
 
   // Reschedule all pending notifications on app load
-  useEffect(() => {
-    if (tasks.length > 0 && !loading) {
-      rescheduleAll(tasks);
+const rescheduleAll = useCallback((taskList) => {
+  taskList.forEach((task) => {
+    if (!task.completed && task.reminderTime) {
+      scheduleNotification(task);
     }
-  }, [loading]);
+  });
+}, []);
 
   return {
     tasks,
