@@ -14,7 +14,6 @@ exports.checkReminders = onSchedule("every 1 minutes", async (event) => {
 
   console.log("Checking reminders at", now.toISOString());
 
-  // get all users
   const usersSnapshot = await db.collection("users").get();
 
   for (const userDoc of usersSnapshot.docs) {
@@ -22,9 +21,8 @@ exports.checkReminders = onSchedule("every 1 minutes", async (event) => {
     const userData = userDoc.data();
     const fcmToken = userData.fcmToken;
 
-    if (!fcmToken) continue; // user never enabled notifications
+    if (!fcmToken) continue;
 
-    // get this user's tasks that are due and not yet notified and not completed
     const tasksRef = db.collection("users").doc(userId).collection("tasks");
     const tasksSnapshot = await tasksRef
       .where("notified", "==", false)
@@ -38,7 +36,6 @@ exports.checkReminders = onSchedule("every 1 minutes", async (event) => {
 
       const reminderDate = task.reminderTime.toDate();
 
-      // is it time to fire this reminder?
       if (reminderDate <= now) {
         try {
           await messaging.send({
@@ -59,12 +56,10 @@ exports.checkReminders = onSchedule("every 1 minutes", async (event) => {
 
           console.log(`Notification sent for task "${task.title}" to user ${userId}`);
 
-          // mark as notified so it doesn't fire again
           await taskDoc.ref.update({ notified: true });
         } catch (error) {
           console.error(`Failed to send notification for task ${taskDoc.id}:`, error);
 
-          // if token is invalid/expired, clear it so we stop trying
           if (
             error.code === "messaging/registration-token-not-registered" ||
             error.code === "messaging/invalid-registration-token"
