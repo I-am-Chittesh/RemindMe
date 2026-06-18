@@ -5,15 +5,15 @@ import App from "./App.jsx"
 import { onForegroundMessage } from "./firebase/messaging"
 
 // Register Firebase messaging service worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/firebase-messaging-sw.js", { scope: "/" })
+// Manually register the Firebase Messaging service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/firebase-messaging-sw.js')
     .then((registration) => {
-      console.log("Firebase messaging SW registered:", registration)
+      console.log('Firebase messaging SW registered:', registration);
     })
-    .catch((error) => {
-      console.error("Firebase messaging SW registration failed:", error)
-    })
+    .catch((err) => {
+      console.error('Firebase messaging SW registration failed:', err);
+    });
 }
 
 // Set up foreground message listener
