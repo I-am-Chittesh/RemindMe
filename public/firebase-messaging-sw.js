@@ -2,12 +2,12 @@ importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js
 importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-  apiKey: "VITE_FIREBASE_API_KEY",
-  authDomain: "VITE_FIREBASE_AUTH_DOMAIN",
-  projectId: "VITE_FIREBASE_PROJECT_ID",
-  storageBucket: "VITE_FIREBASE_STORAGE_BUCKET",
-  messagingSenderId: "VITE_FIREBASE_MESSAGING_SENDER_ID",
-  appId: "VITE_FIREBASE_APP_ID",
+  apiKey: "AIzaSyCflK1ZjvukQnizZQC9F-hIv7UI_P5glT4",
+  authDomain: "remindme-e3fd0.firebaseapp.com",
+  projectId: "remindme-e3fd0",
+  storageBucket: "remindme-e3fd0.firebasestorage.app",
+  messagingSenderId: "653198374072",
+  appId: "1:653198374072:web:b33251c2eed5f48164f04d",
 });
 
 const messaging = firebase.messaging();
@@ -40,7 +40,6 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-// activate immediately, don't wait for old SW to be killed
 self.addEventListener("install", () => {
   self.skipWaiting();
 });

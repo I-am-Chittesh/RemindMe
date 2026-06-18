@@ -7,15 +7,20 @@ let messaging = null;
 export const requestNotificationPermission = async (userId) => {
   try {
     const supported = await isSupported();
-    if (!supported) return null;
+    if (!supported) {
+      console.warn("FCM not supported in this browser");
+      return null;
+    }
 
     if (!messaging) messaging = getMessaging(app);
 
     const permission = await Notification.requestPermission();
-    if (permission !== "granted") return null;
+    if (permission !== "granted") {
+      console.warn("Notification permission denied");
+      return null;
+    }
 
-    // explicitly get the Firebase messaging SW registration, not the Workbox one
-    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
 
     const token = await getToken(messaging, {
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
@@ -24,6 +29,7 @@ export const requestNotificationPermission = async (userId) => {
 
     if (token && userId) {
       await saveFCMToken(userId, token);
+      console.log("FCM token saved ✅");
     }
 
     return token;
@@ -33,7 +39,6 @@ export const requestNotificationPermission = async (userId) => {
   }
 };
 
-// Foreground messages — when app is open and a push arrives
 export const onForegroundMessage = (callback) => {
   if (!messaging) messaging = getMessaging(app);
   return onMessage(messaging, (payload) => {
