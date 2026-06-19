@@ -6,12 +6,8 @@ A progressive web application for task management and reminder notifications.
 
 - Task Management: Create, edit, and delete tasks
 - Push Notifications: Real-time notifications across desktop and mobile devices
-- Authentication: Google Sign-In with role-based access control
-- Offline Support: Progressive Web App with service worker caching
-- Dark Mode: System theme detection with manual toggle
-- Real-time Synchronization: Cloud-based data persistence with Firestore
 
-## Technology Stack
+## TechStack
 
 - Frontend: React 18, Vite, Tailwind CSS, Framer Motion
 - Backend: Firebase (Authentication, Firestore, Cloud Functions)
@@ -64,6 +60,10 @@ firebase deploy
 ```
 
 Builds optimized production bundle and deploys to Firebase Hosting and Cloud Functions.
+
+## Creator Notes
+_Feel free to fork the repo and give pull requests for Open Source Contributions_
+### Made by I-am-Chittesh
 
 ## License
 
