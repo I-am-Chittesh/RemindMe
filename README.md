@@ -23,7 +23,7 @@ A progressive web application for task management and reminder notifications.
 ## Installation
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/I-am-Chittesh/RemindMe>
 cd RemindMe
 
 npm install
