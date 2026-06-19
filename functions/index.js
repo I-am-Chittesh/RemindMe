@@ -43,7 +43,9 @@ exports.checkReminders = onSchedule(
 
         if (reminderDate <= now) {
           try {
-            await messaging.send({
+            console.log(`Attempting to send notification for task "${task.title}" to token ${fcmToken.slice(-10)}`);
+            
+            const messageId = await messaging.send({
               token: fcmToken,
               notification: {
                 title: "RemindMe 🔔",
@@ -56,10 +58,16 @@ exports.checkReminders = onSchedule(
                 fcmOptions: {
                   link: "/",
                 },
+                notification: {
+                  title: "RemindMe 🔔",
+                  body: task.title,
+                  icon: "/icons/icon-192x192.png",
+                  badge: "/icons/icon-192x192.png",
+                },
               },
             });
 
-            console.log(`Notification sent for task "${task.title}" to user ${userId}`);
+            console.log(`✅ Notification sent for task "${task.title}" to user ${userId} - Message ID: ${messageId}`);
 
             await taskDoc.ref.update({ notified: true });
           } catch (error) {
