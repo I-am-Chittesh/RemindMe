@@ -34,13 +34,13 @@ const Header = ({ tasks }) => {
 
         <button
           onClick={toggleTheme}
-          className="w-9 h-9 rounded-full bg-white/40 dark:bg-white/5 backdrop-blur-md border border-white/30 dark:border-white/10 flex items-center justify-center text-lg transition-colors hover:bg-white/50 dark:hover:bg-white/10"
+          className="w-9 h-9 rounded-full bg-gray-100 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/10 flex items-center justify-center text-lg transition-colors hover:bg-gray-200 dark:hover:bg-white/10"
         >
           {theme === "dark" ? "☀️" : "🌙"}
         </button>
       </div>
 
-      <div className="bg-white/40 dark:bg-white/5 backdrop-blur-md border border-white/30 dark:border-white/10 rounded-apple-lg px-4 py-3 flex justify-between items-center mb-6">
+      <div className="bg-gray-50 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/10 rounded-apple-lg px-4 py-3 flex justify-between items-center mb-6">
         <div>
           <p className="text-xs text-gray-600 dark:text-gray-400">Tasks today</p>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{pending}</p>
