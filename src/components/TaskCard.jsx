@@ -1,4 +1,5 @@
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { useRef, useState } from "react";
 
 const formatTime = (reminderTime) => {
   if (!reminderTime) return null;
@@ -30,39 +31,97 @@ const getRecurrenceLabel = (recurrence) => {
   }
 };
 
-const SWIPE_THRESHOLD = -72;
-
 const TaskCard = ({ task, onToggle, onDelete }) => {
   const x = useMotionValue(0);
-  const deleteOpacity = useTransform(x, [-120, -40], [1, 0]);
-  const deleteScale = useTransform(x, [-120, -40], [1, 0.7]);
-  const cardBg = useTransform(x, [-120, 0], ["#FF3B30", "transparent"]);
+  const deleteOpacity = useTransform(x, [-100, -30], [1, 0]);
 
-  const handleDragEnd = (_, info) => {
-    if (info.offset.x < SWIPE_THRESHOLD) {
-      animate(x, -500, {
-        duration: 0.25,
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+  const cardRef = useRef(null);
+  const isDragging = useRef(false);
+  const isHorizontal = useRef(false);
+  const [swiped, setSwiped] = useState(false);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    isDragging.current = false;
+    isHorizontal.current = false;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchStartX.current) return;
+
+    const dx = e.touches[0].clientX - touchStartX.current;
+    const dy = e.touches[0].clientY - touchStartY.current;
+
+    // determine direction on first significant move
+    if (!isDragging.current) {
+      if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+      isHorizontal.current = Math.abs(dx) > Math.abs(dy);
+      isDragging.current = true;
+    }
+
+    // only handle horizontal drags
+    if (!isHorizontal.current) return;
+
+    e.preventDefault(); // stop page scroll during horizontal drag
+
+    // only allow left swipe, not right
+    if (dx > 0) {
+      x.set(0);
+      return;
+    }
+
+    x.set(Math.max(dx, -120));
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging.current || !isHorizontal.current) {
+      touchStartX.current = null;
+      return;
+    }
+
+    const currentX = x.get();
+
+    if (currentX < -70) {
+      // delete
+      setSwiped(true);
+      animate(x, -400, {
+        duration: 0.2,
         ease: "easeOut",
         onComplete: () => onDelete(task.id),
       });
     } else {
+      // snap back
       animate(x, 0, {
         type: "spring",
         stiffness: 400,
-        damping: 30,
+        damping: 35,
       });
     }
+
+    touchStartX.current = null;
+    isDragging.current = false;
   };
+
+  const handleCheckToggle = (e) => {
+    e.stopPropagation();
+    if (!isDragging.current) {
+      onToggle(task.id, !task.completed);
+    }
+  };
+
+  if (swiped) return null;
 
   return (
     <div
       className="relative mb-2.5 rounded-apple overflow-hidden"
-      style={{ touchAction: "pan-y" }}
     >
-      {/* delete background — sits behind the card */}
-      <div className="absolute inset-0 bg-apple-red flex items-center justify-end pr-5 rounded-apple">
+      {/* red delete background */}
+      <div className="absolute inset-0 bg-apple-red rounded-apple flex items-center justify-end pr-5">
         <motion.div
-          style={{ opacity: deleteOpacity, scale: deleteScale }}
+          style={{ opacity: deleteOpacity }}
           className="flex flex-col items-center gap-0.5"
         >
           <svg
@@ -83,25 +142,23 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
         </motion.div>
       </div>
 
-      {/* draggable card */}
+      {/* card — uses native touch events */}
       <motion.div
-        style={{ x, touchAction: "pan-y" }}
-        drag="x"
-        dragDirectionLock
-        dragConstraints={{ left: -120, right: 0 }}
-        dragElastic={{ left: 0.05, right: 0 }}
-        dragMomentum={false}
-        onDragEnd={handleDragEnd}
+        ref={cardRef}
+        style={{ x }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        animate={{ opacity: task.completed ? 0.45 : 1 }}
         initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: task.completed ? 0.45 : 1, y: 0 }}
-        transition={{ duration: 0.2, ease: "easeOut" }}
+        whileInView={{ opacity: task.completed ? 0.45 : 1, y: 0 }}
+        transition={{ duration: 0.2 }}
         className="relative bg-white dark:bg-apple-darkcard border border-gray-100 dark:border-apple-darkborder px-4 py-3 flex items-center gap-3 rounded-apple select-none"
       >
-        {/* checkmark button */}
-        <motion.button
-          whileTap={{ scale: 0.85 }}
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => onToggle(task.id, !task.completed)}
+        {/* checkmark */}
+        <button
+          onTouchEnd={handleCheckToggle}
+          onClick={handleCheckToggle}
           className={`w-7 h-7 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors duration-200 ${
             task.completed
               ? "bg-apple-blue border-apple-blue"
@@ -119,7 +176,7 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
               />
             </svg>
           )}
-        </motion.button>
+        </button>
 
         {/* content */}
         <div className="flex-1 min-w-0">
@@ -150,7 +207,6 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
                 {formatTime(task.reminderTime)}
               </p>
             )}
-
             {getRecurrenceLabel(task.recurrence) && (
               <span className="text-xs text-apple-blue font-medium">
                 {getRecurrenceLabel(task.recurrence)}
