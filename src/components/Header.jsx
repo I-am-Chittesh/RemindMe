@@ -2,9 +2,9 @@ import useTheme from "../hooks/useTheme";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning 👋";
-  if (hour < 17) return "Good afternoon 👋";
-  return "Good evening 👋";
+  if (hour < 12) return "Whadaapppp nigga";
+  if (hour < 17) return "Yo Yo Yo";
+  return "Sup homie";
 };
 
 const getDate = () => {
