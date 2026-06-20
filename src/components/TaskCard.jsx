@@ -153,7 +153,7 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: task.completed ? 0.5 : 1, y: 0 }}
         transition={{ duration: 0.2 }}
-        className="relative bg-white/5 dark:bg-white/5 backdrop-blur-md border border-white/10 dark:border-white/10 px-4 py-3 flex items-center gap-3 rounded-apple select-none"
+        className="relative bg-gray-50 dark:bg-white/5 backdrop-blur-md border border-gray-300 dark:border-white/10 rounded-apple-lg px-4 py-3 flex items-center gap-3 select-none"
       >
         {/* checkmark */}
         <button
