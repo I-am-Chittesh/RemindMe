@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const RECURRENCE_OPTIONS = [
+  { value: "none", label: "No repeat" },
+  { value: "daily", label: "Daily" },
+  { value: "weekly", label: "Weekly" },
+  { value: "monthly", label: "Monthly" },
+];
+
 const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [recurrence, setRecurrence] = useState("none");
 
   const handleSubmit = () => {
     if (!title.trim()) return;
@@ -15,12 +23,18 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
       reminderTime = new Date(`${date}T${time}`).toISOString();
     }
 
-    onAdd({ title: title.trim(), note: note.trim(), reminderTime });
+    onAdd({
+      title: title.trim(),
+      note: note.trim(),
+      reminderTime,
+      recurrence,
+    });
 
     setTitle("");
     setNote("");
     setDate("");
     setTime("");
+    setRecurrence("none");
     onClose();
   };
 
@@ -47,7 +61,9 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
           >
             <div className="w-9 h-1 bg-gray-200 dark:bg-apple-darkborder rounded-full mx-auto mb-5" />
 
-            <h2 className="text-[17px] font-semibold text-gray-900 dark:text-white mb-4">New reminder</h2>
+            <h2 className="text-[17px] font-semibold text-gray-900 dark:text-white mb-4">
+              New reminder
+            </h2>
 
             <input
               type="text"
@@ -66,7 +82,7 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
               className="w-full bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white placeholder-apple-gray rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-transparent focus:border-apple-blue transition-colors"
             />
 
-            <div className="flex gap-2 mb-5">
+            <div className="flex gap-2 mb-3">
               <input
                 type="date"
                 value={date}
@@ -80,6 +96,24 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
                 onChange={(e) => setTime(e.target.value)}
                 className="flex-1 bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white rounded-apple px-3 py-3 text-[14px] outline-none border border-transparent focus:border-apple-blue transition-colors"
               />
+            </div>
+
+            {/* recurrence picker */}
+            <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide">
+              {RECURRENCE_OPTIONS.map((option) => (
+                <motion.button
+                  key={option.value}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setRecurrence(option.value)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-colors ${
+                    recurrence === option.value
+                      ? "bg-apple-blue text-white"
+                      : "bg-apple-lightbg dark:bg-apple-darkbg text-apple-gray"
+                  }`}
+                >
+                  {option.label}
+                </motion.button>
+              ))}
             </div>
 
             <motion.button
