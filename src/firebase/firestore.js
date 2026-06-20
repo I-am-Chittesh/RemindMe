@@ -16,7 +16,6 @@ import app from "./config";
 
 const db = getFirestore(app);
 
-// Add a new task
 export const addTask = async (userId, taskData) => {
   try {
     const ref = collection(db, "users", userId, "tasks");
@@ -26,6 +25,7 @@ export const addTask = async (userId, taskData) => {
       reminderTime: taskData.reminderTime
         ? Timestamp.fromDate(new Date(taskData.reminderTime))
         : null,
+      recurrence: taskData.recurrence || "none",
       completed: false,
       notified: false,
       createdAt: serverTimestamp(),
@@ -37,7 +37,6 @@ export const addTask = async (userId, taskData) => {
   }
 };
 
-// Get all tasks for a user
 export const getTasks = async (userId) => {
   try {
     const ref = collection(db, "users", userId, "tasks");
@@ -48,7 +47,9 @@ export const getTasks = async (userId) => {
       return {
         id: doc.id,
         ...data,
-        reminderTime: data.reminderTime ? data.reminderTime.toDate().toISOString() : null,
+        reminderTime: data.reminderTime
+          ? data.reminderTime.toDate().toISOString()
+          : null,
       };
     });
   } catch (error) {
@@ -57,7 +58,6 @@ export const getTasks = async (userId) => {
   }
 };
 
-// Mark task complete / incomplete
 export const toggleTask = async (userId, taskId, completed) => {
   try {
     const ref = doc(db, "users", userId, "tasks", taskId);
@@ -68,7 +68,6 @@ export const toggleTask = async (userId, taskId, completed) => {
   }
 };
 
-// Delete a task
 export const deleteTask = async (userId, taskId) => {
   try {
     const ref = doc(db, "users", userId, "tasks", taskId);
@@ -79,7 +78,6 @@ export const deleteTask = async (userId, taskId) => {
   }
 };
 
-// Save FCM token to the user's doc — this is what the Cloud Function uses to send pushes
 export const saveFCMToken = async (userId, token) => {
   try {
     const ref = doc(db, "users", userId);
