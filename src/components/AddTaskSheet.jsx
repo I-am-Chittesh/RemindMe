@@ -57,7 +57,7 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-white dark:bg-apple-darkcard rounded-t-apple-xl z-50 px-5 pt-3 pb-10 shadow-apple-dark"
+            className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-apple-darkcard/95 backdrop-blur-lg rounded-t-apple-xl z-50 px-5 pt-3 pb-10 shadow-apple-dark border-t border-white/20"
           >
             <div className="w-9 h-1 bg-gray-200 dark:bg-apple-darkborder rounded-full mx-auto mb-5" />
 
@@ -71,7 +71,7 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
-              className="w-full bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white placeholder-apple-gray rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-transparent focus:border-apple-blue transition-colors"
+              className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-sm text-gray-900 dark:text-white placeholder-apple-gray rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-white/30 dark:border-white/10 focus:border-apple-blue focus:bg-white/50 dark:focus:bg-white/10 transition-colors"
             />
 
             <input
@@ -79,7 +79,7 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
               placeholder="Note (optional)"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white placeholder-apple-gray rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-transparent focus:border-apple-blue transition-colors"
+              className="w-full bg-white/40 dark:bg-white/5 backdrop-blur-sm text-gray-900 dark:text-white placeholder-apple-gray rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-white/30 dark:border-white/10 focus:border-apple-blue focus:bg-white/50 dark:focus:bg-white/10 transition-colors"
             />
 
             <div className="flex gap-2 mb-3">
@@ -88,13 +88,13 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
                 value={date}
                 min={today}
                 onChange={(e) => setDate(e.target.value)}
-                className="flex-1 bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white rounded-apple px-3 py-3 text-[14px] outline-none border border-transparent focus:border-apple-blue transition-colors"
+                className="flex-1 bg-white/40 dark:bg-white/5 backdrop-blur-sm text-gray-900 dark:text-white rounded-apple px-3 py-3 text-[14px] outline-none border border-white/30 dark:border-white/10 focus:border-apple-blue focus:bg-white/50 dark:focus:bg-white/10 transition-colors"
               />
               <input
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="flex-1 bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white rounded-apple px-3 py-3 text-[14px] outline-none border border-transparent focus:border-apple-blue transition-colors"
+                className="flex-1 bg-white/40 dark:bg-white/5 backdrop-blur-sm text-gray-900 dark:text-white rounded-apple px-3 py-3 text-[14px] outline-none border border-white/30 dark:border-white/10 focus:border-apple-blue focus:bg-white/50 dark:focus:bg-white/10 transition-colors"
               />
             </div>
 
@@ -108,7 +108,7 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
                   className={`flex-shrink-0 px-4 py-2 rounded-full text-[13px] font-medium transition-colors ${
                     recurrence === option.value
                       ? "bg-apple-blue text-white"
-                      : "bg-apple-lightbg dark:bg-apple-darkbg text-apple-gray"
+                      : "bg-white/40 dark:bg-white/5 backdrop-blur-sm text-gray-900 dark:text-gray-100 border border-white/20 dark:border-white/10 hover:bg-white/50 dark:hover:bg-white/10"
                   }`}
                 >
                   {option.label}

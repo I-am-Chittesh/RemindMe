@@ -21,8 +21,8 @@ const TaskList = ({ tasks, onToggle, onDelete }) => {
   return (
     <div className="px-4 pb-28">
       {pending.length > 0 && (
-        <div className="mb-2">
-          <p className="text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2.5">
+        <div className="mb-6">
+          <p className="text-xs font-medium text-apple-gray mb-3">
             Pending
           </p>
           <AnimatePresence>
@@ -39,8 +39,8 @@ const TaskList = ({ tasks, onToggle, onDelete }) => {
       )}
 
       {completed.length > 0 && (
-        <div className="mt-4">
-          <p className="text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2.5">
+        <div className="mt-6">
+          <p className="text-xs font-medium text-apple-gray mb-3">
             Done
           </p>
           <AnimatePresence>

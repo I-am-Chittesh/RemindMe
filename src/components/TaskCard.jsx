@@ -149,11 +149,11 @@ const TaskCard = ({ task, onToggle, onDelete }) => {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        animate={{ opacity: task.completed ? 0.45 : 1 }}
+        animate={{ opacity: task.completed ? 0.5 : 1 }}
         initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: task.completed ? 0.45 : 1, y: 0 }}
+        whileInView={{ opacity: task.completed ? 0.5 : 1, y: 0 }}
         transition={{ duration: 0.2 }}
-        className="relative bg-white dark:bg-apple-darkcard border border-gray-100 dark:border-apple-darkborder px-4 py-3 flex items-center gap-3 rounded-apple select-none"
+        className="relative bg-white/40 dark:bg-white/5 backdrop-blur-md border border-white/30 dark:border-white/10 px-4 py-3 flex items-center gap-3 rounded-apple select-none"
       >
         {/* checkmark */}
         <button
