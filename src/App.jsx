@@ -48,7 +48,7 @@ const App = () => {
           </div>
 
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">RemindMe</h1>
-          <p className="text-apple-gray text-base mb-10">Your tasks. Your reminders. Nothing missed.</p>
+          <p className="text-apple-gray text-base mb-10">Whadapp Homie</p>
 
           <motion.button
             whileTap={{ scale: 0.96 }}
