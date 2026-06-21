@@ -7,22 +7,23 @@ const TaskList = ({ tasks, onToggle, onDelete }) => {
 
   if (tasks.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center mt-20 px-8 text-center">
-        <p className="text-gray-900 dark:text-white font-semibold text-lg">
-          Bottoms up!
-        </p>
-        <p className="text-apple-gray text-sm mt-1">
-          Tap + to add your first reminder
+      <div className="flex flex-col items-center justify-center mt-24 px-8 text-center">
+        <p className="text-white font-semibold text-[17px]">No tasks bud</p>
+        <p className="text-apple-gray text-[15px] mt-1">
+          Add reminders.
         </p>
       </div>
     );
   }
 
   return (
-    <div className="px-4 pb-28">
+    <div className="px-5 pb-28">
       {pending.length > 0 && (
         <div className="mb-2">
-          <p className="text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2.5">
+          <p
+            className="text-[13px] font-semibold uppercase tracking-wider mb-3"
+            style={{ color: "#8E8E93", letterSpacing: "0.08em" }}
+          >
             Pending
           </p>
           <AnimatePresence>
@@ -39,8 +40,11 @@ const TaskList = ({ tasks, onToggle, onDelete }) => {
       )}
 
       {completed.length > 0 && (
-        <div className="mt-4">
-          <p className="text-xs font-semibold text-apple-gray uppercase tracking-wide mb-2.5">
+        <div className="mt-6">
+          <p
+            className="text-[13px] font-semibold uppercase tracking-wider mb-3"
+            style={{ color: "#8E8E93", letterSpacing: "0.08em" }}
+          >
             Done
           </p>
           <AnimatePresence>

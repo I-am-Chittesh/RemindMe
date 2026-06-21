@@ -1,10 +1,8 @@
-import useTheme from "../hooks/useTheme";
-
 const getGreeting = () => {
   const hour = new Date().getHours();
-  if (hour < 12) return "Whadaapppp nigga";
-  if (hour < 17) return "Yo Yo Yo";
-  return "Sup homie";
+  if (hour < 12) return "sup homie.";
+  if (hour < 17) return "sup homie.";
+  return "sup homie.";
 };
 
 const getDate = () => {
@@ -16,41 +14,51 @@ const getDate = () => {
 };
 
 const Header = ({ tasks }) => {
-  const { theme, toggleTheme } = useTheme();
-
   const total = tasks.length;
   const completed = tasks.filter((t) => t.completed).length;
   const pending = total - completed;
 
   return (
-    <div className="px-4 pt-6 pb-2">
-      <div className="flex justify-between items-start mb-5">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {getGreeting()}
-          </h1>
-          <p className="text-sm text-apple-gray mt-0.5">{getDate()}</p>
-        </div>
-
-        <button
-          onClick={toggleTheme}
-          className="w-9 h-9 rounded-full bg-white dark:bg-apple-darkcard border border-gray-200 dark:border-apple-darkborder flex items-center justify-center text-lg shadow-apple"
+    <div className="px-5 pt-8 pb-2">
+      {/* greeting */}
+      <div className="mb-6">
+        <h1
+          className="text-[28px] font-bold text-white tracking-tight"
+          style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
         >
-          {theme === "dark" ? "☀️" : "🌙"}
-        </button>
+          {getGreeting()}
+        </h1>
+        <p className="text-[15px] text-apple-gray mt-0.5 font-normal">
+          {getDate()}
+        </p>
       </div>
 
-      <div className="bg-apple-blue rounded-apple-lg px-4 py-3 flex justify-between items-center mb-6">
+      {/* summary bar — dark card, no blue */}
+      <div
+        className="rounded-apple-lg px-5 py-4 flex justify-between items-center mb-6"
+        style={{
+          background: "#2C2C2E",
+          border: "0.5px solid #3A3A3C",
+        }}
+      >
         <div>
-          <p className="text-xs text-blue-200">Tasks today</p>
-          <p className="text-2xl font-bold text-white">{pending}</p>
-          <p className="text-xs text-blue-200">remaining</p>
+          <p className="text-[13px] text-apple-gray font-normal">Tasks today</p>
+          <p
+            className="text-[34px] font-bold text-white leading-none mt-1"
+            style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
+          >
+            {pending}
+          </p>
+          <p className="text-[13px] text-apple-gray mt-1">remaining</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-blue-200">Completed</p>
-          <p className="text-2xl font-bold text-white">
+          <p className="text-[13px] text-apple-gray font-normal">Completed</p>
+          <p
+            className="text-[34px] font-bold text-white leading-none mt-1"
+            style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
+          >
             {completed}
-            <span className="text-sm font-normal"> / {total}</span>
+            <span className="text-[17px] font-normal text-apple-gray"> / {total}</span>
           </p>
         </div>
       </div>
