@@ -8,9 +8,10 @@ const TaskList = ({ tasks, onToggle, onDelete }) => {
   if (tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center mt-24 px-8 text-center">
-        <p className="text-white font-semibold text-[17px]">No tasks bud</p>
+        <div className="text-5xl mb-4">🎯</div>
+        <p className="text-white font-semibold text-[17px]">No tasks yet</p>
         <p className="text-apple-gray text-[15px] mt-1">
-          Add reminders.
+          Tap + to add your first reminder
         </p>
       </div>
     );

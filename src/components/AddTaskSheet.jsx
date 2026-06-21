@@ -57,7 +57,8 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 bg-white dark:bg-apple-darkcard rounded-t-apple-xl z-50 px-5 pt-3 pb-10 shadow-apple-dark"
+            className="fixed bottom-0 left-0 right-0 rounded-t-apple-xl z-50 px-5 pt-3 pb-10"
+style={{ background: "#2C2C2E", borderTop: "0.5px solid #3A3A3C" }}
           >
             <div className="w-9 h-1 bg-gray-200 dark:bg-apple-darkborder rounded-full mx-auto mb-5" />
 
@@ -71,7 +72,8 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
-              className="w-full bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white placeholder-apple-gray rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-transparent focus:border-apple-blue transition-colors"
+              className="w-full rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-transparent focus:border-apple-blue transition-colors text-white placeholder-apple-gray"
+style={{ background: "#3A3A3C" }}
             />
 
             <input
@@ -79,7 +81,8 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
               placeholder="Note (optional)"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full bg-apple-lightbg dark:bg-apple-darkbg text-gray-900 dark:text-white placeholder-apple-gray rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-transparent focus:border-apple-blue transition-colors"
+              className="w-full rounded-apple px-4 py-3 text-[15px] outline-none mb-3 border border-transparent focus:border-apple-blue transition-colors text-white placeholder-apple-gray"
+style={{ background: "#3A3A3C" }}
             />
 
             <div className="flex gap-2 mb-3">
