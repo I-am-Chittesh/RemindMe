@@ -1,20 +1,24 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import useAuth from "./hooks/useAuth";
 import useTheme from "./hooks/useTheme";
 import { signInWithGoogle, logOut } from "./firebase/auth";
 import { requestNotificationPermission, onForegroundMessage } from "./firebase/messaging";
 import Home from "./pages/Home";
+import Calendar from "./pages/Calendar";
+import BottomNav from "./components/BottomNav";
+import useTasks from "./hooks/useTasks";
 import { motion } from "framer-motion";
 
 const App = () => {
   const { user, loading } = useAuth();
+  const [activeTab, setActiveTab] = useState("tasks");
   useTheme();
 
   useEffect(() => {
     if (user) {
       requestNotificationPermission(user.uid);
       const unsubscribe = onForegroundMessage((payload) => {
-        console.log("Foreground push:", payload);
+        console.log("Foreground notification:", payload);
       });
       return () => unsubscribe && unsubscribe();
     }
@@ -22,7 +26,10 @@ const App = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-apple-lightbg dark:bg-apple-darkbg flex items-center justify-center">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: "#1C1C1E" }}
+      >
         <motion.div
           animate={{ opacity: [0.4, 1, 0.4] }}
           transition={{ duration: 1.5, repeat: Infinity }}
@@ -36,24 +43,44 @@ const App = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-apple-lightbg dark:bg-apple-darkbg flex flex-col items-center justify-center px-8">
+      <div
+        className="min-h-screen flex flex-col items-center justify-center px-8"
+        style={{ background: "#1C1C1E" }}
+      >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex flex-col items-center text-center"
+          className="flex flex-col items-center text-center w-full"
         >
-          <div className="w-20 h-20 bg-apple-blue rounded-apple-lg flex items-center justify-center mb-6 shadow-apple-btn">
+          <div
+            className="w-20 h-20 rounded-apple-lg flex items-center justify-center mb-6"
+            style={{
+              background: "#007AFF",
+              boxShadow: "0 4px 14px rgba(0,122,255,0.4)",
+            }}
+          >
             <span className="text-4xl">🔔</span>
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">RemindMe</h1>
-          <p className="text-apple-gray text-base mb-10">Whadapp Homie</p>
+          <h1
+            className="text-[32px] font-bold text-white mb-2 tracking-tight"
+            style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
+          >
+            RemindMe
+          </h1>
+          <p className="text-apple-gray text-[15px] mb-10">
+            Your tasks. Your reminders. Nothing missed.
+          </p>
 
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={signInWithGoogle}
-            className="flex items-center gap-3 bg-white dark:bg-apple-darkcard border border-gray-200 dark:border-apple-darkborder rounded-apple px-6 py-3.5 shadow-apple w-full justify-center"
+            className="flex items-center gap-3 rounded-apple px-6 py-3.5 w-full justify-center"
+            style={{
+              background: "#2C2C2E",
+              border: "0.5px solid #3A3A3C",
+            }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -61,14 +88,36 @@ const App = () => {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            <span className="text-[15px] font-semibold text-gray-900 dark:text-white">Continue with Google</span>
+            <span
+              className="text-[15px] font-semibold text-white"
+              style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
+            >
+              Continue with Google
+            </span>
           </motion.button>
+
+          {/* sign out option for wrong account */}
+          <button
+            onClick={logOut}
+            className="mt-4 text-apple-gray text-[13px]"
+          >
+            Use a different account
+          </button>
         </motion.div>
       </div>
     );
   }
 
-  return <Home user={user} onSignOut={logOut} />;
+  return (
+    <div className="min-h-screen" style={{ background: "#1C1C1E" }}>
+      {/* tab content */}
+      {activeTab === "tasks" && <Home user={user} />}
+      {activeTab === "calendar" && <Calendar user={user} />}
+
+      {/* bottom nav — always visible when logged in */}
+      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+    </div>
+  );
 };
 
 export default App;
