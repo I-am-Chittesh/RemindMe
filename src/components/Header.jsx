@@ -1,8 +1,8 @@
 const getGreeting = () => {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning 👋";
-  if (hour < 17) return "Good afternoon 👋";
-  return "Good evening 👋";
+  if (hour < 12) return "sup homie.";
+  if (hour < 17) return "sup homie.";
+  return "sup homie.";
 };
 
 const getDate = () => {

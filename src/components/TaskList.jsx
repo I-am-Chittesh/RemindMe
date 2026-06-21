@@ -12,7 +12,7 @@ const TaskList = ({ tasks, onToggle, onDelete }) => {
           Bottoms up!
         </p>
         <p className="text-apple-gray text-sm mt-1">
-          Tap + to add your first reminder
+          + to add
         </p>
       </div>
     );
