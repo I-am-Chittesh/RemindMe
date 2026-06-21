@@ -6,21 +6,24 @@ import FAB from "../components/FAB";
 import AddTaskSheet from "../components/AddTaskSheet";
 import useTasks from "../hooks/useTasks";
 
-const Home = ({ user, onSignOut }) => {
+const Home = ({ user }) => {
   const [sheetOpen, setSheetOpen] = useState(false);
-  const { tasks, loading, handleAddTask, handleToggleTask, handleDeleteTask } = useTasks(user.uid);
+  const {
+    tasks,
+    loading,
+    handleAddTask,
+    handleToggleTask,
+    handleDeleteTask,
+  } = useTasks(user.uid);
 
   return (
-    <div className="min-h-screen bg-apple-lightbg dark:bg-apple-darkbg">
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          onClick={onSignOut}
-          className="text-xs text-apple-gray px-3 py-1.5 rounded-full bg-white dark:bg-apple-darkcard border border-gray-100 dark:border-apple-darkborder"
-        >
-          Sign out
-        </button>
-      </div>
-
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
+      className="min-h-screen"
+      style={{ background: "#1C1C1E" }}
+    >
       <Header tasks={tasks} />
 
       {loading ? (
@@ -34,13 +37,21 @@ const Home = ({ user, onSignOut }) => {
           </motion.div>
         </div>
       ) : (
-        <TaskList tasks={tasks} onToggle={handleToggleTask} onDelete={handleDeleteTask} />
+        <TaskList
+          tasks={tasks}
+          onToggle={handleToggleTask}
+          onDelete={handleDeleteTask}
+        />
       )}
 
       <FAB onClick={() => setSheetOpen(true)} />
 
-      <AddTaskSheet isOpen={sheetOpen} onClose={() => setSheetOpen(false)} onAdd={handleAddTask} />
-    </div>
+      <AddTaskSheet
+        isOpen={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        onAdd={handleAddTask}
+      />
+    </motion.div>
   );
 };
 
