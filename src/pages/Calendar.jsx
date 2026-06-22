@@ -55,11 +55,8 @@ const Calendar = ({ user, onModalChange }) => {
           className="text-[28px] font-bold text-white tracking-tight"
           style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
         >
-          Calendar
+          calendar.
         </h1>
-        <p className="text-[15px] mt-0.5" style={{ color: "#8E8E93" }}>
-          {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-        </p>
       </div>
 
       <MonthGrid

@@ -78,9 +78,9 @@ const BottomNav = ({ activeTab, onTabChange, onAddTask, hidden }) => {
         onClick={onAddTask}
         className="flex items-center justify-center mx-4"
         style={{
-          width: "52px",
-          height: "52px",
-          borderRadius: "50%",
+          width: "60px",
+          height: "60px",
+          borderRadius: "1  00px",
           background: "#007AFF",
         }}
       >
