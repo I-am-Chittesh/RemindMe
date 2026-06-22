@@ -6,12 +6,12 @@ import { requestNotificationPermission, onForegroundMessage } from "./firebase/m
 import Home from "./pages/Home";
 import Calendar from "./pages/Calendar";
 import BottomNav from "./components/BottomNav";
-import useTasks from "./hooks/useTasks";
 import { motion } from "framer-motion";
 
 const App = () => {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState("tasks");
+  const [modalOpen, setModalOpen] = useState(false);
   useTheme();
 
   useEffect(() => {
@@ -95,14 +95,6 @@ const App = () => {
               Continue with Google
             </span>
           </motion.button>
-
-          {/* sign out option for wrong account */}
-          <button
-            onClick={logOut}
-            className="mt-4 text-apple-gray text-[13px]"
-          >
-            Use a different account
-          </button>
         </motion.div>
       </div>
     );
@@ -110,12 +102,15 @@ const App = () => {
 
   return (
     <div className="min-h-screen" style={{ background: "#1C1C1E" }}>
-      {/* tab content */}
       {activeTab === "tasks" && <Home user={user} />}
-      {activeTab === "calendar" && <Calendar user={user} />}
-
-      {/* bottom nav — always visible when logged in */}
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      {activeTab === "calendar" && (
+        <Calendar user={user} onModalChange={setModalOpen} />
+      )}
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        hidden={modalOpen}
+      />
     </div>
   );
 };

@@ -38,15 +38,19 @@ const CalendarIcon = ({ active }) => (
   </svg>
 );
 
-const BottomNav = ({ activeTab, onTabChange }) => {
+const BottomNav = ({ activeTab, onTabChange, hidden }) => {
+  if (hidden) return null;
+
   const tabs = [
     { id: "tasks", label: "Tasks", Icon: TasksIcon },
     { id: "calendar", label: "Calendar", Icon: CalendarIcon },
   ];
 
   return (
-    <div
-      className="fixed bottom-6 left-1/2 z-50 flex items-center justify-around px-10 py-3 gap-10"
+    <motion.div
+      initial={{ y: 0 }}
+      animate={{ y: 0 }}
+      className="fixed bottom-6 left-1/2 z-40 flex items-center justify-around px-10 py-3 gap-10"
       style={{
         transform: "translateX(-50%)",
         background: "rgba(44, 44, 46, 0.95)",
@@ -77,7 +81,7 @@ const BottomNav = ({ activeTab, onTabChange }) => {
           </motion.button>
         );
       })}
-    </div>
+    </motion.div>
   );
 };
 

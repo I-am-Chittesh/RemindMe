@@ -42,7 +42,6 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
     day: "numeric",
   });
 
-  // filter tasks for selected date
   const dayTasks = tasks.filter((task) => {
     if (!task.reminderTime) return false;
     const t = new Date(task.reminderTime);
@@ -63,7 +62,7 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
   };
 
   return (
-    <AnimatePresence>
+    <>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -86,13 +85,11 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
           overflowY: "auto",
         }}
       >
-        {/* handle */}
         <div
           className="w-9 h-1 rounded-full mx-auto mb-4"
           style={{ background: "#3A3A3C" }}
         />
 
-        {/* header */}
         <div className="flex items-center justify-between mb-5">
           <h2
             className="text-[17px] font-semibold text-white"
@@ -113,7 +110,6 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
           </motion.button>
         </div>
 
-        {/* task groups */}
         {hasAnyTask ? (
           groupOrder.map((group) => {
             const groupTasks = groups[group];
@@ -126,9 +122,9 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
                 >
                   {group}
                 </p>
-                {groupTasks.map((task) => (
+                {groupTasks.map((task, index) => (
                   <motion.button
-                    key={task.id}
+                    key={task.id || `${group}-${index}`}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => onEditTask(task)}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-apple mb-2 text-left"
@@ -137,14 +133,10 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
                       border: "0.5px solid #48484A",
                     }}
                   >
-                    {/* completion indicator */}
                     <div
                       className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{
-                        background: task.completed ? "#8E8E93" : "#007AFF",
-                      }}
+                      style={{ background: task.completed ? "#8E8E93" : "#007AFF" }}
                     />
-
                     <div className="flex-1 min-w-0">
                       <p
                         className="text-[15px] font-medium truncate"
@@ -169,8 +161,6 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
                         )}
                       </div>
                     </div>
-
-                    {/* chevron */}
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" strokeWidth="2" strokeLinecap="round">
                       <polyline points="9,18 15,12 9,6" />
                     </svg>
@@ -189,7 +179,6 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
           </div>
         )}
 
-        {/* add button */}
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={handleAddForDay}
@@ -208,7 +197,7 @@ const DayModal = ({ selectedDate, tasks, onClose, onAddTask, onEditTask }) => {
           </span>
         </motion.button>
       </motion.div>
-    </AnimatePresence>
+    </>
   );
 };
 
