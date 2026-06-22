@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 const TasksIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <path
       d="M9 11l3 3L22 4"
       stroke={active ? "#007AFF" : "#8E8E93"}
@@ -20,13 +20,9 @@ const TasksIcon = ({ active }) => (
 );
 
 const CalendarIcon = ({ active }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <rect
-      x="3"
-      y="4"
-      width="18"
-      height="18"
-      rx="3"
+      x="3" y="4" width="18" height="18" rx="3"
       stroke={active ? "#007AFF" : "#8E8E93"}
       strokeWidth="2"
     />
@@ -36,24 +32,9 @@ const CalendarIcon = ({ active }) => (
       strokeWidth="2"
       strokeLinecap="round"
     />
-    <circle
-      cx="8"
-      cy="16"
-      r="1.5"
-      fill={active ? "#007AFF" : "#8E8E93"}
-    />
-    <circle
-      cx="12"
-      cy="16"
-      r="1.5"
-      fill={active ? "#007AFF" : "#8E8E93"}
-    />
-    <circle
-      cx="16"
-      cy="16"
-      r="1.5"
-      fill={active ? "#007AFF" : "#8E8E93"}
-    />
+    <circle cx="8" cy="16" r="1.5" fill={active ? "#007AFF" : "#8E8E93"} />
+    <circle cx="12" cy="16" r="1.5" fill={active ? "#007AFF" : "#8E8E93"} />
+    <circle cx="16" cy="16" r="1.5" fill={active ? "#007AFF" : "#8E8E93"} />
   </svg>
 );
 
@@ -65,12 +46,16 @@ const BottomNav = ({ activeTab, onTabChange }) => {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-8 pt-3 pb-8"
+      className="fixed bottom-6 left-1/2 z-50 flex items-center justify-around px-10 py-3 gap-10"
       style={{
-        background: "rgba(28, 28, 30, 0.85)",
+        transform: "translateX(-50%)",
+        background: "rgba(44, 44, 46, 0.95)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        borderTop: "0.5px solid #3A3A3C",
+        border: "0.5px solid #3A3A3C",
+        borderRadius: "24px",
+        width: "auto",
+        minWidth: "200px",
       }}
     >
       {tabs.map((tab) => {
@@ -89,13 +74,6 @@ const BottomNav = ({ activeTab, onTabChange }) => {
             >
               {tab.label}
             </span>
-            {active && (
-              <motion.div
-                layoutId="tab-indicator"
-                className="absolute bottom-0 w-1 h-1 rounded-full bg-apple-blue"
-                style={{ bottom: "28px" }}
-              />
-            )}
           </motion.button>
         );
       })}
