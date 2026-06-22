@@ -1,13 +1,10 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import TaskList from "../components/TaskList";
-import FAB from "../components/FAB";
 import AddTaskSheet from "../components/AddTaskSheet";
 import useTasks from "../hooks/useTasks";
 
-const Home = ({ user }) => {
-  const [sheetOpen, setSheetOpen] = useState(false);
+const Home = ({ user, addSheetOpen, setAddSheetOpen }) => {
   const {
     tasks,
     loading,
@@ -31,7 +28,8 @@ const Home = ({ user }) => {
           <motion.div
             animate={{ opacity: [0.4, 1, 0.4] }}
             transition={{ duration: 1.2, repeat: Infinity }}
-            className="text-apple-gray text-sm"
+            className="text-[15px]"
+            style={{ color: "#8E8E93" }}
           >
             Loading tasks...
           </motion.div>
@@ -44,11 +42,9 @@ const Home = ({ user }) => {
         />
       )}
 
-      <FAB onClick={() => setSheetOpen(true)} />
-
       <AddTaskSheet
-        isOpen={sheetOpen}
-        onClose={() => setSheetOpen(false)}
+        isOpen={addSheetOpen}
+        onClose={() => setAddSheetOpen(false)}
         onAdd={handleAddTask}
       />
     </motion.div>

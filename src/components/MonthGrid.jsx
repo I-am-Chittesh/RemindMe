@@ -18,15 +18,9 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
     year: "numeric",
   });
 
-  const prevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
-  };
+  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  const nextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
-  };
-
-  // build task dot map — which dates have tasks
   const taskMap = {};
   tasks.forEach((task) => {
     if (!task.reminderTime) return;
@@ -39,14 +33,9 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
     }
   });
 
-  // build calendar cells
   const cells = [];
-  for (let i = 0; i < firstDay; i++) {
-    cells.push(null); // empty cells before month starts
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    cells.push(d);
-  }
+  for (let i = 0; i < firstDay; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   const isToday = (day) =>
     day === today.getDate() &&
@@ -62,22 +51,20 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
     );
   };
 
-  const handleDayPress = (day) => {
-    if (!day) return;
-    onSelectDate(new Date(year, month, day));
-  };
-
   return (
     <div
-      className="rounded-apple-lg p-4 mx-5"
+      className="mx-4 rounded-apple-lg overflow-hidden"
       style={{ background: "#2C2C2E", border: "0.5px solid #3A3A3C" }}
     >
       {/* month header */}
-      <div className="flex items-center justify-between mb-4">
+      <div
+        className="flex items-center justify-between px-5 py-4"
+        style={{ borderBottom: "0.5px solid #3A3A3C" }}
+      >
         <motion.button
           whileTap={{ scale: 0.88 }}
           onClick={prevMonth}
-          className="w-8 h-8 flex items-center justify-center rounded-full"
+          className="w-9 h-9 flex items-center justify-center rounded-full"
           style={{ background: "#3A3A3C" }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" strokeWidth="2.5" strokeLinecap="round">
@@ -86,7 +73,7 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
         </motion.button>
 
         <span
-          className="text-[16px] font-semibold text-white"
+          className="text-[17px] font-semibold text-white"
           style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
         >
           {monthLabel}
@@ -95,7 +82,7 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
         <motion.button
           whileTap={{ scale: 0.88 }}
           onClick={nextMonth}
-          className="w-8 h-8 flex items-center justify-center rounded-full"
+          className="w-9 h-9 flex items-center justify-center rounded-full"
           style={{ background: "#3A3A3C" }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" strokeWidth="2.5" strokeLinecap="round">
@@ -105,25 +92,25 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
       </div>
 
       {/* day headers */}
-      <div className="grid grid-cols-7 mb-2">
+      <div className="grid grid-cols-7 px-2 pt-3 pb-1">
         {DAYS.map((d) => (
-          <div key={d} className="flex items-center justify-center">
-            <span className="text-[11px] font-medium" style={{ color: "#8E8E93" }}>
+          <div key={d} className="flex items-center justify-center py-1">
+            <span
+              className="text-[12px] font-semibold uppercase tracking-wider"
+              style={{ color: "#8E8E93" }}
+            >
               {d}
             </span>
           </div>
         ))}
       </div>
 
-      {/* date cells */}
-      <div className="grid grid-cols-7 gap-y-1">
+      {/* date grid */}
+      <div className="grid grid-cols-7 px-2 pb-4 gap-y-1">
         {cells.map((day, index) => {
-          if (!day) {
-            return <div key={`empty-${index}`} className="h-10" />;
-          }
+          if (!day) return <div key={`empty-${index}`} className="h-14" />;
 
           const hasTask = taskMap[day];
-          const allDone = hasTask && hasTask.pending === 0 && hasTask.done > 0;
           const hasPending = hasTask && hasTask.pending > 0;
           const todayCell = isToday(day);
           const selectedCell = isSelected(day);
@@ -132,8 +119,8 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
             <motion.button
               key={day}
               whileTap={{ scale: 0.85 }}
-              onClick={() => handleDayPress(day)}
-              className="flex flex-col items-center justify-center h-10 rounded-xl relative"
+              onClick={() => onSelectDate(new Date(year, month, day))}
+              className="flex flex-col items-center justify-center h-14 rounded-xl relative"
               style={{
                 background: selectedCell
                   ? "#FFFFFF"
@@ -143,26 +130,21 @@ const MonthGrid = ({ tasks, onSelectDate, selectedDate }) => {
               }}
             >
               <span
-                className="text-[15px] font-medium leading-none"
+                className="text-[16px] font-semibold leading-none"
                 style={{
-                  color: selectedCell
-                    ? "#000000"
-                    : todayCell
-                    ? "#FFFFFF"
-                    : "#FFFFFF",
+                  color: selectedCell || todayCell ? (selectedCell ? "#000000" : "#FFFFFF") : "#FFFFFF",
                   fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif",
                 }}
               >
                 {day}
               </span>
 
-              {/* task dot */}
               {hasTask && (
                 <div
-                  className="w-1 h-1 rounded-full mt-0.5"
+                  className="w-1.5 h-1.5 rounded-full mt-1"
                   style={{
                     background: selectedCell || todayCell
-                      ? "rgba(255,255,255,0.7)"
+                      ? "rgba(255,255,255,0.8)"
                       : hasPending
                       ? "#007AFF"
                       : "#8E8E93",
