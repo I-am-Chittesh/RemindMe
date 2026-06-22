@@ -1,18 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import MonthGrid from "../components/MonthGrid";
 import DayModal from "../components/DayModal";
 import AddTaskSheet from "../components/AddTaskSheet";
 import useTasks from "../hooks/useTasks";
 
-const Calendar = ({ user }) => {
+const Calendar = ({ user, onModalChange }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [addSheetOpen, setAddSheetOpen] = useState(false);
   const [prefilledDate, setPrefilledDate] = useState(null);
-  const [editingTask, setEditingTask] = useState(null);
 
   const { tasks, handleAddTask } = useTasks(user.uid);
+
+  useEffect(() => {
+    onModalChange(modalOpen || addSheetOpen);
+  }, [modalOpen, addSheetOpen]);
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
@@ -21,13 +24,13 @@ const Calendar = ({ user }) => {
 
   const handleAddForDay = (date) => {
     setPrefilledDate(date);
+    setModalOpen(false);
     setAddSheetOpen(true);
   };
 
   const handleAddTaskWithDate = (taskData) => {
     let reminderTime = taskData.reminderTime;
     if (!reminderTime && prefilledDate) {
-      // default to 9am on the selected date if no time was picked
       const d = new Date(prefilledDate);
       d.setHours(9, 0, 0, 0);
       reminderTime = d.toISOString();
@@ -36,8 +39,6 @@ const Calendar = ({ user }) => {
   };
 
   const handleEditTask = (task) => {
-    setEditingTask(task);
-    // for now just close modal — EditTaskSheet comes in Phase 4
     setModalOpen(false);
   };
 
@@ -49,7 +50,6 @@ const Calendar = ({ user }) => {
       className="min-h-screen pb-32"
       style={{ background: "#1C1C1E" }}
     >
-      {/* header */}
       <div className="px-5 pt-8 pb-4">
         <h1
           className="text-[28px] font-bold text-white tracking-tight"
@@ -62,14 +62,12 @@ const Calendar = ({ user }) => {
         </p>
       </div>
 
-      {/* month grid */}
       <MonthGrid
         tasks={tasks}
         onSelectDate={handleDateSelect}
         selectedDate={selectedDate}
       />
 
-      {/* day modal */}
       {modalOpen && (
         <DayModal
           selectedDate={selectedDate}
@@ -80,7 +78,6 @@ const Calendar = ({ user }) => {
         />
       )}
 
-      {/* add task sheet — pre-filled with selected date */}
       <AddTaskSheet
         isOpen={addSheetOpen}
         onClose={() => {
