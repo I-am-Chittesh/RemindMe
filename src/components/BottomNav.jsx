@@ -80,7 +80,7 @@ const BottomNav = ({ activeTab, onTabChange, onAddTask, hidden }) => {
         style={{
           width: "60px",
           height: "60px",
-          borderRadius: "1  00px",
+          borderRadius: "50%",
           background: "#007AFF",
         }}
       >
