@@ -6,6 +6,7 @@ A progressive web application for task management and reminder notifications.
 
 - Task Management: Create, edit, and delete tasks
 - Push Notifications: Real-time notifications across desktop and mobile devices
+- Calendar: Better task management
 
 ## TechStack
 
