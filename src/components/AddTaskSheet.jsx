@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const RECURRENCE_OPTIONS = [
@@ -14,6 +15,12 @@ const AddTaskSheet = ({ isOpen, onClose, onAdd }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [recurrence, setRecurrence] = useState("none");
+
+  useEffect(() => {
+    if (prefilledDate) {
+      setDate(prefilledDate.toISOString().split("T")[0]);
+    }
+  }, [prefilledDate]);
 
   const handleSubmit = () => {
     if (!title.trim()) return;
