@@ -1,10 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  addNote,
-  getNotes,
-  deleteNote,
-  updateNote,
-} from "../firebase/firestore";
+import { addNote, getNotes, deleteNote, updateNote } from "../firebase/firestore";
 
 const useNotes = (userId) => {
   const [notes, setNotes] = useState([]);
@@ -12,15 +7,16 @@ const useNotes = (userId) => {
 
   useEffect(() => {
     if (!userId) return;
-    const unsubscribe = getNotes(userId, (fetchedNotes) => {
-      setNotes(fetchedNotes);
+    const unsubscribe = getNotes(userId, (fetched) => {
+      setNotes(fetched);
       setLoading(false);
     });
     return () => unsubscribe && unsubscribe();
   }, [userId]);
 
-  const createNote = async (title, body) => {
-    await addNote(userId, { title, body, pinned: false });
+  const createNote = async () => {
+    const id = await addNote(userId, { title: "", body: "" });
+    return id;
   };
 
   const removeNote = async (noteId) => {
