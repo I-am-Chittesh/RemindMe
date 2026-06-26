@@ -7,6 +7,8 @@ import Home from "./pages/Home";
 import Calendar from "./pages/Calendar";
 import BottomNav from "./components/BottomNav";
 import { motion } from "framer-motion";
+// add this import at the top
+import Notes from "./pages/NotesPage";
 
 const App = () => {
   const { user, loading } = useAuth();
@@ -97,6 +99,9 @@ return (
     )}
     {activeTab === "calendar" && (
       <Calendar user={user} onModalChange={setModalOpen} />
+    )}
+    {activeTab === "notes" && (
+      <Notes user={user} />
     )}
     <BottomNav
       activeTab={activeTab}
