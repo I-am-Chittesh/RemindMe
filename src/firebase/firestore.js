@@ -11,6 +11,7 @@ import {
   orderBy,
   serverTimestamp,
   Timestamp,
+  onSnapshot,
 } from "firebase/firestore";
 import app from "./config";
 
@@ -84,6 +85,54 @@ export const saveFCMToken = async (userId, token) => {
     await setDoc(ref, { fcmToken: token }, { merge: true });
   } catch (error) {
     console.error("Save FCM token error:", error);
+  }
+};
+export const addNote = async (userId, noteData) => {
+  try {
+    const ref = collection(db, "users", userId, "notes");
+    const docRef = await addDoc(ref, {
+      title: noteData.title || "",
+      body: noteData.body || "",
+      pinned: false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Add note error:", error);
+    throw error;
+  }
+};
+
+export const getNotes = (userId, callback) => {
+  const ref = collection(db, "users", userId, "notes");
+  const q = query(ref, orderBy("createdAt", "desc"));
+  return onSnapshot(q, (snapshot) => {
+    const notes = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    callback(notes);
+  });
+};
+
+export const updateNote = async (userId, noteId, updates) => {
+  try {
+    const ref = doc(db, "users", userId, "notes", noteId);
+    await updateDoc(ref, { ...updates, updatedAt: serverTimestamp() });
+  } catch (error) {
+    console.error("Update note error:", error);
+    throw error;
+  }
+};
+
+export const deleteNote = async (userId, noteId) => {
+  try {
+    const ref = doc(db, "users", userId, "notes", noteId);
+    await deleteDoc(ref);
+  } catch (error) {
+    console.error("Delete note error:", error);
+    throw error;
   }
 };
 
