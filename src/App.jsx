@@ -109,6 +109,7 @@ return (
         setActiveTab("tasks");
         setAddSheetOpen(true);
       }}
+      onAddNote={onAddNote}
       hidden={modalOpen}
     />
   </div>
