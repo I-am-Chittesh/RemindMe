@@ -5,15 +5,16 @@ import { signInWithGoogle, logOut } from "./firebase/auth";
 import { requestNotificationPermission, onForegroundMessage } from "./firebase/messaging";
 import Home from "./pages/Home";
 import Calendar from "./pages/Calendar";
+import Notes from "./pages/NotesPage";
 import BottomNav from "./components/BottomNav";
 import { motion } from "framer-motion";
-import Notes from "./pages/NotesPage";
 
 const App = () => {
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState("tasks");
   const [modalOpen, setModalOpen] = useState(false);
   const [addSheetOpen, setAddSheetOpen] = useState(false);
+  const [addNoteOpen, setAddNoteOpen] = useState(false);
   useTheme();
 
   useEffect(() => {
@@ -87,33 +88,40 @@ const App = () => {
     );
   }
 
-return (
-  <div className="min-h-screen" style={{ background: "#1C1C1E" }}>
-    {activeTab === "tasks" && (
-      <Home
-        user={user}
-        addSheetOpen={addSheetOpen}
-        setAddSheetOpen={setAddSheetOpen}
+  return (
+    <div className="min-h-screen" style={{ background: "#1C1C1E" }}>
+      {activeTab === "tasks" && (
+        <Home
+          user={user}
+          addSheetOpen={addSheetOpen}
+          setAddSheetOpen={setAddSheetOpen}
+        />
+      )}
+      {activeTab === "calendar" && (
+        <Calendar user={user} onModalChange={setModalOpen} />
+      )}
+      {activeTab === "notes" && (
+        <Notes
+          user={user}
+          triggerNew={addNoteOpen}
+          onTriggerDone={() => setAddNoteOpen(false)}
+        />
+      )}
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onAddTask={() => {
+          setActiveTab("tasks");
+          setAddSheetOpen(true);
+        }}
+        onAddNote={() => {
+          setActiveTab("notes");
+          setAddNoteOpen(true);
+        }}
+        hidden={modalOpen}
       />
-    )}
-    {activeTab === "calendar" && (
-      <Calendar user={user} onModalChange={setModalOpen} />
-    )}
-    {activeTab === "notes" && (
-      <Notes user={user} />
-    )}
-    <BottomNav
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-      onAddTask={() => {
-        setActiveTab("tasks");
-        setAddSheetOpen(true);
-      }}
-      onAddNote={onAddNote}
-      hidden={modalOpen}
-    />
-  </div>
-);
+    </div>
+  );
 };
 
 export default App;
