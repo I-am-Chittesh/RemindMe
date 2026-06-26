@@ -1,13 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import useNotes from "../hooks/useNotes";
 import NoteCard from "../components/notes/NoteCard";
 import NoteEditor from "../components/notes/NoteEditor";
 
-const NotesPage = ({ user }) => {
+const NotesPage = ({ user, triggerNew, onTriggerDone }) => {
   const { notes, loading, createNote, removeNote, editNote, togglePin } = useNotes(user.uid);
   const [search, setSearch] = useState("");
   const [activeNote, setActiveNote] = useState(null);
+
+  useEffect(() => {
+    if (triggerNew) {
+      handleNew();
+      onTriggerDone();
+    }
+  }, [triggerNew]);
+
+  const handleNew = async () => {
+    const id = await createNote();
+    setTimeout(() => {
+      setActiveNote({ id, title: "", body: "", pinned: false });
+    }, 300);
+  };
 
   const filtered = notes.filter((n) => {
     const q = search.toLowerCase();
@@ -16,14 +30,6 @@ const NotesPage = ({ user }) => {
 
   const pinned = filtered.filter((n) => n.pinned);
   const unpinned = filtered.filter((n) => !n.pinned);
-
-  const handleNew = async () => {
-    const id = await createNote();
-    // find note after creation — small delay for firestore listener
-    setTimeout(() => {
-      setActiveNote({ id, title: "", body: "", pinned: false });
-    }, 300);
-  };
 
   return (
     <>
@@ -133,26 +139,6 @@ const NotesPage = ({ user }) => {
           </div>
         )}
       </div>
-
-      {/* FAB */}
-      <motion.button
-        whileTap={{ scale: 0.9 }}
-        onClick={handleNew}
-        className="fixed bottom-24 right-6 z-40 flex items-center justify-center"
-        style={{
-          width: "56px",
-          height: "56px",
-          borderRadius: "50%",
-          background: "#007AFF",
-          boxShadow: "0 4px 24px rgba(0,122,255,0.35)",
-        }}
-      >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
-          stroke="white" strokeWidth="2.5" strokeLinecap="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-      </motion.button>
 
       {/* editor overlay */}
       <AnimatePresence>
