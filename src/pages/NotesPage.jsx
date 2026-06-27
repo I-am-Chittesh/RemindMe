@@ -40,7 +40,7 @@ const NotesPage = ({ user, triggerNew, onTriggerDone }) => {
             className="text-[32px] font-bold text-white tracking-tight"
             style={{ fontFamily: "-apple-system, 'SF Pro Display', Inter, sans-serif" }}
           >
-            Notes
+            notes.
           </h1>
         </div>
 
