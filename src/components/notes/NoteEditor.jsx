@@ -53,7 +53,7 @@ const NoteEditor = ({ note, onClose, onEdit, onDelete }) => {
             <path d="M9 1L1 9l8 8" stroke="#007AFF" strokeWidth="2"
               strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          Notes
+          notes.
         </motion.button>
 
         <div className="flex items-center gap-4">

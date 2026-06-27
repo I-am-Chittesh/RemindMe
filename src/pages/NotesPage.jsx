@@ -71,7 +71,6 @@ const NotesPage = ({ user, triggerNew, onTriggerDone }) => {
               transition={{ duration: 1.5, repeat: Infinity }}
               className="text-3xl"
             >
-              📝
             </motion.div>
           </div>
         )}
@@ -83,10 +82,9 @@ const NotesPage = ({ user, triggerNew, onTriggerDone }) => {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center pt-24 gap-3"
           >
-            <span className="text-5xl">📝</span>
             <p className="text-white font-semibold text-[17px]">No notes yet</p>
             <p className="text-[14px]" style={{ color: "#636366" }}>
-              Tap + to create your first note
+             + to create note
             </p>
           </motion.div>
         )}
