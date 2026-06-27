@@ -56,7 +56,7 @@ const NotesPage = ({ user, triggerNew, onTriggerDone }) => {
           </svg>
           <input
             type="text"
-            placeholder="Search notes"
+            placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-transparent text-white text-[15px] outline-none w-full placeholder:text-[#636366]"
